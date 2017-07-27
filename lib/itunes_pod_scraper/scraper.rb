@@ -19,10 +19,7 @@ module ItunesPodScraper
     end
 
     def get_all_podcast_ids
-      get_all_category_urls.flat_map do |url|
-        ids = all_ids_for_letters(url.href)
-        binding.pry
-      end
+      get_all_category_urls.flat_map { |url| all_ids_for_letters(url.href) }.uniq
     end
 
     #def process_category(url)
