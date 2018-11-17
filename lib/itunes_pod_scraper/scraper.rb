@@ -1,6 +1,7 @@
 require "mechanize"
 require "json"
 require "itunes_pod_scraper"
+require 'itunes_pod_scraper/category'
 
 module ItunesPodScraper
   class Scraper
@@ -13,9 +14,20 @@ module ItunesPodScraper
       @bot.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
 
+    def get_top_level_categories
+      page = @bot.get(CATEGORY_URL)
+      page.search("//a[@class='top-level-genre']").map do |a|
+        Category.new(a.children[0].text, a.attributes['href'])
+      end
+    end
+
     def get_all_category_urls
       page = @bot.get(CATEGORY_URL)
       page.links.select { |link| link.href.match(/\/genre\/.+mt=2$/) && link.to_s != "Podcasts" }
+    end
+
+    def popular_podcast_ids_for_category(category)
+      process_page(category.url)
     end
 
     def get_all_podcast_ids
