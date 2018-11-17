@@ -14,6 +14,10 @@ module ItunesPodScraper
       @bot.agent.http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
 
+    def podcast_for_id(pod_id)
+      JSON.parse(@bot.get(ID_URL + pod_id).body)['results']
+    end
+
     def get_top_level_categories
       page = @bot.get(CATEGORY_URL)
       page.search("//a[@class='top-level-genre']").map do |a|
@@ -26,21 +30,19 @@ module ItunesPodScraper
       page.links.select { |link| link.href.match(/\/genre\/.+mt=2$/) && link.to_s != "Podcasts" }
     end
 
-    def popular_podcast_ids_for_category(category)
-      process_page(category.url)
+    def popular_podcasts_for_category(category_url)
+      popular_podcast_ids_for_category(category_url).map do |id|
+        podcast_for_id(id)
+      end
+    end
+
+    def popular_podcast_ids_for_category(category_url)
+      process_page(category_url)
     end
 
     def get_all_podcast_ids
       get_all_category_urls.flat_map { |url| all_ids_for_letters(url.href) }.uniq
     end
-
-    #def process_category(url)
-    #  all_ids_for_letters(url).map do |id|
-    #    data = JSON.parse(@bot.get(ID_URL + id).body)
-    #    # Podcast.create_from_json(data)
-    #    binding.pry
-    #  end
-    #end
 
     def all_ids_for_letters(category_url)
       ('A'..'Z').to_a.flat_map do |letter|
