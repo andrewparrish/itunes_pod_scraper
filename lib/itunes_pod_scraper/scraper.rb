@@ -17,7 +17,7 @@ module ItunesPodScraper
     def get_top_level_categories
       page = @bot.get(CATEGORY_URL)
       page.search("//a[@class='top-level-genre']").map do |a|
-        Category.new(a.children[0].text, a.attributes['href'])
+        Category.new(a.children[0].text, a.attributes['href'].value)
       end
     end
 
