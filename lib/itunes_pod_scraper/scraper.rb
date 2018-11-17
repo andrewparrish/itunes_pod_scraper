@@ -15,7 +15,7 @@ module ItunesPodScraper
     end
 
     def podcast_for_id(pod_id)
-      JSON.parse(@bot.get(ID_URL + pod_id).body)['results']
+      JSON.parse(@bot.get(ID_URL + pod_id).body)['results'][0]
     end
 
     def get_top_level_categories
