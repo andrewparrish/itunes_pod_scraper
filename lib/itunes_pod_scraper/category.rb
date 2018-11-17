@@ -6,7 +6,6 @@ module ItunesPodScraper
       @name = name
       @url = url
       @parent_category = parent_category
-      get_popular_podcast_ids
     end
 
     def get_popular_podcast_ids
